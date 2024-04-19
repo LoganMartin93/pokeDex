@@ -6,10 +6,10 @@ let pokemonList = [
 
 ];
 
-for(let i = 0; i < 4; i++){
-    document.write(pokemonList[i].name + ' (height: ' + pokemonList[i].height + ')');
-    if(pokemonList[i].height > 1){
-        document.write("Wow, that's big!");
+pokemonList.forEach(function(pokemon){
+    document.write(pokemon.name + ' (height: ' + pokemon.height + ')');
+    if(pokemon.height > 1){
+        document.write("Wow, that's bi!");
     }
     document.write("<br>");
-}
+});
