@@ -1,11 +1,7 @@
 let pokemonRepository = (function () {
     // Array to hold Pokémon data
-    let pokemonList = [
-      { name: 'Bulbasaur', height: 0.7, types: 'Grass' },
-      { name: 'Charmander', height: 0.6, types: 'Fire' },
-      { name: 'Pikachu', height: 0.4, types: 'Electric' },
-      { name: 'Charizard', height: 1.7, types: 'Fire, Flying' }
-    ];
+    let pokemonList = [];
+    let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
   
     // Function to add a new Pokémon to the list
     function add(pokemon) {
@@ -20,12 +16,12 @@ let pokemonRepository = (function () {
     // Function to add a list item for each Pokémon
     function addListItem(pokemon) {
       let pokemonListElement = document.querySelector(".pokemon-list");
-      let listItem = document.createElement("li");
+      let listItemPokemon = document.createElement("li");
       let button = document.createElement("button");
       button.innerText = pokemon.name;
       button.classList.add("button-class");
-      listItem.appendChild(button);
-      pokemonListElement.appendChild(listItem);
+      listItemPokemon.appendChild(button);
+      pokemonListElement.appendChild(listItemPokemon);
   
       // Add event listener to the button
       button.addEventListener("click", function () {
@@ -35,19 +31,58 @@ let pokemonRepository = (function () {
   
     // Function to show details of the Pokémon in the console
     function showDetails(pokemon) {
-      console.log(pokemon);
+      loadDetails(pokemon).then(function () {
+        console.log(pokemon);
+      });
+    }
+  
+    // Function to load the list of Pokémon from the API
+    function loadList() {
+      return fetch(apiUrl).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        json.results.forEach(function (item) {
+          let pokemon = {
+            name: item.name,
+            detailsUrl: item.url
+          };
+          add(pokemon);
+        });
+      }).catch(function (e) {
+        console.error(e);
+      });
+    }
+  
+    // Function to load details of a specific Pokémon from the API
+    function loadDetails(item) {
+      let url = item.detailsUrl;
+      return fetch(url).then(function (response) {
+        return response.json();
+      }).then(function (details) {
+        // Add the details to the item
+        item.imageUrl = details.sprites.front_default;
+        item.height = details.height;
+        item.types = details.types.map(typeInfo => typeInfo.type.name);
+      }).catch(function (e) {
+        console.error(e);
+      });
     }
   
     // Return functions to be available publicly
     return {
       add: add,
       getAll: getAll,
-      addListItem: addListItem
+      addListItem: addListItem,
+      loadList: loadList,
+      loadDetails: loadDetails
     };
   })();
   
-  // Adding each Pokémon from the list to the display as a list item
-  pokemonRepository.getAll().forEach(function (pokemon) {
-    pokemonRepository.addListItem(pokemon);
+  // Load the list of Pokémon and add them to the display
+  pokemonRepository.loadList().then(function () {
+    // Now the data is loaded!
+    pokemonRepository.getAll().forEach(function (pokemon) {
+      pokemonRepository.addListItem(pokemon);
+    });
   });
   
