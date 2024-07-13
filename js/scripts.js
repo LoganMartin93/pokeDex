@@ -10,27 +10,36 @@ let pokemonRepository = (function () {
     return pokemonList;
   }
 
-  function addListItem(pokemon) {
-    let pokemonListElement = document.querySelector(".pokemon-list");
-    let listItemPokemon = document.createElement("li");
-    let button = document.createElement("button");
-    button.innerText = pokemon.name;
-    button.classList.add("button-class");
-    listItemPokemon.appendChild(button);
-    pokemonListElement.appendChild(listItemPokemon);
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
-    button.addEventListener("click", function () {
+  function addListItem(pokemon) {
+    let pokemonListElement = $(".pokemon-list");
+
+    // Create a column for each Pokémon
+    let column = $("<div></div>").addClass("col-sm-6 col-md-4 col-lg-2");
+
+    let listItemPokemon = $("<div></div>").addClass("pokemon-item card mb-3");
+
+    let button = $("<button></button>")
+      .addClass("btn btn-primary btn-block")
+      .text(capitalizeFirstLetter(pokemon.name))
+      .attr("data-toggle", "modal")
+      .attr("data-target", "#exampleModal");
+
+    listItemPokemon.append(button);
+    column.append(listItemPokemon);
+    pokemonListElement.append(column);
+
+    button.on("click", function () {
       showDetails(pokemon);
     });
   }
 
   function showDetails(pokemon) {
     loadDetails(pokemon).then(function () {
-      showModal(
-        pokemon.name,
-        `Height: ${pokemon.height}\nTypes: ${pokemon.types.join(', ')}`,
-        pokemon.imageUrl
-      );
+      showModal(pokemon);
     });
   }
 
@@ -57,60 +66,60 @@ let pokemonRepository = (function () {
     }).then(function (details) {
       item.imageUrl = details.sprites.front_default;
       item.height = details.height;
+      item.weight = details.weight; // Added weight
       item.types = details.types.map(typeInfo => typeInfo.type.name);
+      item.abilities = details.abilities.map(abilityInfo => abilityInfo.ability.name); // Added abilities
     }).catch(function (e) {
       console.error(e);
     });
   }
 
   // Modal functionality
-  (function() {
-    let modalContainer = document.querySelector('#modal-container');
+  (function () {
+    function showModal(pokemon) {
+      let modalTitle = $("#pokemonModalTitle");
+      let modalBody = $(".modal-body");
+      let modalContent = $(".modal-content");
 
-    function showModal(title, text, imageUrl) {
-      modalContainer.innerHTML = '';
-      let modal = document.createElement('div');
-      modal.classList.add('modal');
+      modalTitle.empty();
+      modalBody.empty();
 
-      let closeButtonElement = document.createElement('button');
-      closeButtonElement.classList.add('modal-close');
-      closeButtonElement.innerText = 'Close';
-      closeButtonElement.addEventListener('click', hideModal);
+      let nameElement = $("<h1>" + capitalizeFirstLetter(pokemon.name) + "</h1>");
+      let imageElement = $('<img class="modal-img" style="width:50%">');
+      imageElement.attr("src", pokemon.imageUrl);
 
-      let titleElement = document.createElement('h1');
-      titleElement.innerText = title;
+      let heightElement = $("<p>" + "Height: " + pokemon.height + "</p>");
+      let weightElement = $("<p>" + "Weight: " + pokemon.weight + "</p>");
+      let typesElement = $("<p>" + "Types: " + pokemon.types.join(", ") + "</p>");
+      let abilitiesElement = $("<p>" + "Abilities: " + pokemon.abilities.join(", ") + "</p>");
 
-      let contentElement = document.createElement('p');
-      contentElement.innerText = text;
+      modalTitle.append(nameElement);
+      modalBody.append(imageElement);
+      modalBody.append(heightElement);
+      modalBody.append(weightElement);
+      modalBody.append(typesElement);
+      modalBody.append(abilitiesElement);
 
-      let imageElement = document.createElement('img');
-      imageElement.src = imageUrl;
-      imageElement.alt = title;
+      // Determine the background color based on the Pokémon's types
+      let backgroundColor = "white"; // Default color
 
-      modal.appendChild(closeButtonElement);
-      modal.appendChild(titleElement);
-      modal.appendChild(contentElement);
-      modal.appendChild(imageElement);
-      modalContainer.appendChild(modal);
-
-      modalContainer.classList.add('is-visible');
-    }
-
-    function hideModal() {
-      modalContainer.classList.remove('is-visible');
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
-        hideModal();
+      if (pokemon.types.includes("fire")) {
+        backgroundColor = "red";
+      } else if (pokemon.types.includes("grass")) {
+        backgroundColor = "green";
+      } else if (pokemon.types.includes("poison")) {
+        backgroundColor = "purple";
+      } else if (pokemon.types.includes("water")) {
+        backgroundColor = "blue";
+      } else if (pokemon.types.includes("electric")) {
+        backgroundColor = "yellow";
       }
-    });
 
-    modalContainer.addEventListener('click', (e) => {
-      if (e.target === modalContainer) {
-        hideModal();
-      }
-    });
+      // Apply the background color to the modal
+      modalContent.css("background-color", backgroundColor);
+
+      $('#exampleModal').modal('show'); // Show the modal
+    }
 
     window.showModal = showModal; // Expose showModal function to global scope
   })();
