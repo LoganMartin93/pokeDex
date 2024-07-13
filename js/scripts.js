@@ -23,7 +23,7 @@ let pokemonRepository = (function () {
     let listItemPokemon = $("<div></div>").addClass("pokemon-item card mb-3");
 
     let button = $("<button></button>")
-      .addClass("btn btn-primary btn-block")
+      .addClass("btn btn-primary btn-block btn-light-grey")
       .text(capitalizeFirstLetter(pokemon.name))
       .attr("data-toggle", "modal")
       .attr("data-target", "#exampleModal");

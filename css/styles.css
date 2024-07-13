@@ -1,4 +1,14 @@
 /* styles.css */
+.page-container{
+  margin-top: 60px;
+}
+
 .modal-content {
+  text-align: center;
   z-index: 1050;
+}
+
+.btn-light-grey{
+  background-color: lightslategray;
+  color: white;
 }
