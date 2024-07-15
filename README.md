@@ -13,6 +13,9 @@ On user action (e.g. by clicking on a list item) view details for that item
 
 Description
 
+Link to the live application page
+https://loganmartin93.github.io/pokeDex/
+
 This project is a web-based Pokédex application that fetches data from Pokémon API, loads and displays it in a user-friendly interface. The displayed list of Pokémons is interactive and allows users to click on specific Pokémon to bring up further details in a modal.
 
 Key Features
