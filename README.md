@@ -27,6 +27,6 @@ Bootstrap
 Prettier and ESLint
 Dependencies
 Pokémon API - https://pokeapi.co/api/v2/pokemon/?limit=150
-Bootstrap JS - https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js
-Popper - https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js
+Bootstrap JS - https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js
+Popper - https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js
 jQuery - https://code.jquery.com/jquery-3.3.1.slim.min.js
