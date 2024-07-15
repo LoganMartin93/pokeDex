@@ -2,6 +2,15 @@ let pokemonRepository = (function () {
   let pokemonList = [];
   let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
+    //Filter pokemons by name
+    function filterPokemons(searchTerm) {
+      let filteredPokemons = pokemonList.filter((pokemon) =>
+        pokemon.name.toLowerCase().startsWith(searchTerm));
+      let pokemonContainer = document.querySelector('.row');
+      pokemonContainer.innerHTML = '';
+      filteredPokemons.forEach((pokemon) => addListItem(pokemon));
+    }
+
   function add(pokemon) {
     pokemonList.push(pokemon);
   }
@@ -64,7 +73,7 @@ let pokemonRepository = (function () {
     return fetch(url).then(function (response) {
       return response.json();
     }).then(function (details) {
-      item.imageUrl = details.sprites.front_default;
+      item.imageUrl = details.sprites.other.dream_world.front_default;
       item.height = details.height;
       item.weight = details.weight; // Added weight
       item.types = details.types.map(typeInfo => typeInfo.type.name);
@@ -100,23 +109,7 @@ let pokemonRepository = (function () {
       modalBody.append(typesElement);
       modalBody.append(abilitiesElement);
 
-      // Determine the background color based on the Pokémon's types
-      let backgroundColor = "white"; // Default color
-
-      if (pokemon.types.includes("fire")) {
-        backgroundColor = "red";
-      } else if (pokemon.types.includes("grass")) {
-        backgroundColor = "green";
-      } else if (pokemon.types.includes("poison")) {
-        backgroundColor = "purple";
-      } else if (pokemon.types.includes("water")) {
-        backgroundColor = "blue";
-      } else if (pokemon.types.includes("electric")) {
-        backgroundColor = "yellow";
-      }
-
-      // Apply the background color to the modal
-      modalContent.css("background-color", backgroundColor);
+      modalContent.addClass("modal-gradient");
 
       $('#exampleModal').modal('show'); // Show the modal
     }
@@ -129,7 +122,8 @@ let pokemonRepository = (function () {
     getAll: getAll,
     addListItem: addListItem,
     loadList: loadList,
-    loadDetails: loadDetails
+    loadDetails: loadDetails,
+    filterPokemons: filterPokemons
   };
 })();
 
@@ -137,4 +131,13 @@ pokemonRepository.loadList().then(function () {
   pokemonRepository.getAll().forEach(function (pokemon) {
     pokemonRepository.addListItem(pokemon);
   });
+
+    // Search pokemons by name
+    document
+    .querySelector('#search-form')
+    .addEventListener('input', function (e) {
+      e.preventDefault();
+      let searchTerm = document.querySelector('#search-input').value;
+      pokemonRepository.filterPokemons(searchTerm);
+    });
 });
